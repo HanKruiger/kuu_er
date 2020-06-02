@@ -1,0 +1,15 @@
+{
+  "name": "kuu_er",
+  "collaborators": [
+    "Han Kruiger <HanKruiger@users.noreply.github.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "kuu_er_bg.wasm",
+    "kuu_er.js",
+    "kuu_er.d.ts"
+  ],
+  "module": "kuu_er.js",
+  "types": "kuu_er.d.ts",
+  "sideEffects": "false"
+}

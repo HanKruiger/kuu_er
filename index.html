@@ -1,0 +1,124 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <style>
+body {
+  background-color: rgb(230, 230, 230);
+}
+
+input, button {
+  font-size: large;
+}
+
+div#qr-code {
+  max-width: 20em;
+  margin: 2em 0;
+}
+
+canvas#qr-code-canvas {
+  display: none;
+}
+    </style>
+  </head>
+  <body>
+    <input id="textToEncode" type="text"
+      placeholder="Enter/paste text/url here..."
+      autocomplete="off">
+    <div id="qr-code"></div>
+    <button id="save" hidden="true">Save</button>
+
+    <canvas id="qr-code-canvas"></canvas>
+
+    <script type="module">
+import init, { make_qr } from './pkg/kuu_er.js';
+
+const border = 4; // Number of padding cells cells inside the QR code.
+const fileNameMaxLength = 15;
+
+const DOMURL = window.URL || window.webkitURL || window;
+const canvas = document.querySelector('canvas#qr-code-canvas');
+const ctx = canvas.getContext('2d');
+const qrCodeDiv = document.querySelector('div#qr-code');
+const saveButton = document.querySelector('button#save');
+
+let textToEncode = '';
+
+// Async because we have to await the wasm module. It is triggered below.
+async function run() {
+  await init();
+
+  document.getElementById('textToEncode').addEventListener('input', (e) => {
+    textToEncode = e.target.value;
+
+    if (textToEncode === '') {
+      saveButton.hidden = true;
+      qrCodeDiv.innerHTML = '';
+      return;
+    }
+
+    // This is where the wasm-bindgen magic happens: The call to the imported
+    // `make_qr function.
+    const svgString = make_qr(textToEncode, border);
+    qrCodeDiv.innerHTML = svgString;
+    saveButton.hidden = false;
+  });
+
+  saveButton.addEventListener('click', () => {
+    const svgElem = qrCodeDiv.querySelector('svg');
+
+    // Set the width/height based on the bounding rectangle so it appears
+    // 'exactly' like the SVG from the DOM.
+    const rect = svgElem.getBoundingClientRect();
+    svgElem.setAttribute('width', rect.width);
+    svgElem.setAttribute('height', rect.height);
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    // Serialize the SVG to proper XML that can be loaded as an image.
+    const serialized = new XMLSerializer().serializeToString(svgElem);
+
+    // Make a data blob for the XML and create a URL for it.
+    const blob = new Blob([serialized],
+      {type: 'image/svg+xml;charset=utf-8'});
+    const svgUrl = DOMURL.createObjectURL(blob);
+
+    // Render the SVG to an off-screen image, which is in turn rendered
+    // to a hidden canvas that can be downloaded.
+    const img = new Image();
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0);
+
+      // Convert the canvas into a base64 encoding, and turn it into a
+      // downloadable stream.
+      const url = canvas.toDataURL('image/png')
+        .replace('image/png', 'octet/stream');
+
+      // Make a fake download button and simulate a click.
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.style = 'display: none';
+      a.href = url
+      // Truncate the filename if necessary.
+      let fileName = textToEncode;
+      if (fileName.length > fileNameMaxLength) {
+        fileName = fileName.substring(0, fileNameMaxLength - 3) + '...';
+      }
+      a.download = fileName + '.png';
+
+      a.click();
+
+      // Clean up the resources we used.
+      DOMURL.revokeObjectURL(svgUrl);
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+
+    // Trigger `onload` by setting the source URL to the one we just created.
+    img.src = svgUrl;
+  })
+}
+
+run();
+    </script>
+  </body>
+</html>
