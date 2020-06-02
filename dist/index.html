@@ -93,7 +93,6 @@ async function run() {
       // Convert the canvas into a base64 encoding, and turn it into a
       // downloadable stream.
       const url = canvas.toDataURL('image/png');
-        // .replace('image/png', 'application/octet-stream');
 
       // Make a fake download button and simulate a click.
       const a = document.createElement('a');
