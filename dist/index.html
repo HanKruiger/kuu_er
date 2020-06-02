@@ -81,7 +81,7 @@ async function run() {
 
     // Make a data blob for the XML and create a URL for it.
     const blob = new Blob([serialized],
-      {type: 'image/svg+xml;charset=utf-8'});
+      {type: 'image/svg+xml'});
     const svgUrl = DOMURL.createObjectURL(blob);
 
     // Render the SVG to an off-screen image, which is in turn rendered
