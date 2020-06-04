@@ -1,10 +1,12 @@
 <html>
   <head>
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kuu Er</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
 body {
+  font-family: sans-serif;
   background-color: rgb(230, 230, 230);
 }
 
@@ -26,10 +28,11 @@ canvas#qr-code-canvas {
     <input id="textToEncode" type="text"
       placeholder="Enter/paste text/url here..."
       autocomplete="off">
-    <div id="qr-code"></div>
     <button id="save" hidden="true">Save</button>
+    <div id="qr-code"></div>
 
     <canvas id="qr-code-canvas"></canvas>
+    <a href="https://github.com/HanKruiger/kuu_er" target="_blank">About</a>
 
     <script type="module">
 import init, { make_qr } from './pkg/kuu_er.js';
