@@ -25,9 +25,11 @@ canvas#qr-code-canvas {
     </style>
   </head>
   <body>
-    <input id="textToEncode" type="text"
-      placeholder="Enter/paste text/url here..."
-      autocomplete="off">
+    <textarea id="textToEncode"
+      rows=4 cols=31
+      placeholder="Enter or paste text/url here"
+      autocomplete="off"
+    ></textarea>
     <button id="save" hidden="true">Save</button>
     <div id="qr-code"></div>
 
