@@ -11,5 +11,7 @@
   ],
   "module": "kuu_er.js",
   "types": "kuu_er.d.ts",
-  "sideEffects": false
+  "sideEffects": [
+    "./snippets/*"
+  ]
 }
